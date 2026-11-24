@@ -1,4 +1,4 @@
-# 阶段考试系统
+# 考试系统
 
 [各平台初始化与使用](docs/初始化与使用.md) · [源码仓库](https://github.com/IMAiCool/exam)
 
