@@ -4,6 +4,36 @@
 
 账号、试卷、答卷、密钥和本地运行时不在源码仓库中。源码压缩包不等于完整 Windows 独立运行包。
 
+## 界面预览
+
+以下截图使用独立演示账号和示例试卷，不包含真实用户、考试数据或部署域名。
+
+### 登录界面
+
+![登录界面](docs/screenshots/login.png)
+
+### 教师端
+
+设置试卷题型、题数、分值和考试时间。
+
+![教师端：试卷设置](docs/screenshots/teacher.png)
+
+编辑题干、代码块、选项和参考答案。
+
+![教师端：题目编辑](docs/screenshots/teacher-editor.png)
+
+### 学生端
+
+按题号作答，使用代码编辑器和测试用例完成编程题。
+
+![学生端：编程题作答](docs/screenshots/student.png)
+
+### 管理员端
+
+创建账号、批量导入学生、维护分组、修改密码及生成重置码。
+
+![管理员端：账号管理](docs/screenshots/admin.png)
+
 ## 跨平台运行
 
 在 Windows、macOS 或 Linux 上准备好支持 Linux 容器的 Docker 和 Compose v2，在项目目录执行：
