@@ -1,0 +1,112 @@
+services:
+  exam:
+    image: exam-web:local
+    build:
+      context: .
+      target: exam
+    depends_on:
+      wasi-worker:
+        condition: service_healthy
+      java-worker:
+        condition: service_healthy
+      mysql-worker:
+        condition: service_healthy
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${EXAM_PORT:-8787}:8787"
+    environment:
+      DEEPSEEK_API_KEY: ${DEEPSEEK_API_KEY:-}
+      EXAM_AI_MODEL: ${EXAM_AI_MODEL:-deepseek-flash}
+      COOKIE_SECURE: ${COOKIE_SECURE:-0}
+      EXAM_MYSQL_SOCKET: /run/exam-judge/mysql.sock
+      EXAM_WASI_SOCKET: /run/exam-judge/wasi.sock
+    volumes:
+      - exam-data:/data
+      - judge-socket:/run/exam-judge:ro
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get('http://127.0.0.1:8787/login',r=>{r.resume();process.exit(r.statusCode===200?0:1)}).on('error',()=>process.exit(1))"]
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 6
+  wasi-worker:
+    image: exam-wasi:local
+    build:
+      context: .
+      target: wasi-worker
+    restart: unless-stopped
+    network_mode: none
+    read_only: true
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    mem_limit: 768m
+    cpus: 1
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=128m,mode=1777
+    volumes:
+      - judge-socket:/run/exam-judge
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get({socketPath:'/run/exam-judge/wasi.sock',path:'/health'},r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 60s
+      retries: 4
+  java-worker:
+    image: exam-java8:local
+    build:
+      context: .
+      target: java-worker
+    restart: unless-stopped
+    network_mode: none
+    read_only: true
+    init: true
+    cap_drop: [ALL]
+    security_opt:
+      - no-new-privileges:true
+    pids_limit: 192
+    mem_limit: 1536m
+    cpus: 2
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,noexec,size=128m,mode=1777
+    volumes:
+      - judge-socket:/run/exam-judge
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get({socketPath:'/run/exam-judge/java.sock',path:'/health'},r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 30s
+      retries: 4
+  mysql-worker:
+    image: exam-mysql:local
+    environment:
+      EXAM_MYSQL_POOL_SIZE: ${EXAM_MYSQL_POOL_SIZE:-1}
+      EXAM_MYSQL_QUEUE_LIMIT: ${EXAM_MYSQL_QUEUE_LIMIT:-32}
+      EXAM_MYSQL_QUEUE_TIMEOUT_MS: ${EXAM_MYSQL_QUEUE_TIMEOUT_MS:-60000}
+      EXAM_MYSQL_TASK_TIMEOUT_MS: ${EXAM_MYSQL_TASK_TIMEOUT_MS:-90000}
+    build:
+      context: .
+      target: mysql-worker
+    restart: unless-stopped
+    network_mode: none
+    read_only: true
+    init: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 192
+    mem_limit: 768m
+    cpus: 1
+    tmpfs:
+      - /tmp:rw,nosuid,nodev,size=512m,mode=1777
+    volumes:
+      - judge-socket:/run/exam-judge
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get({socketPath:'/run/exam-judge/mysql.sock',path:'/health'},r=>process.exit(r.statusCode===200?0:1)).on('error',()=>process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      start_period: 90s
+      retries: 4
+volumes:
+  exam-data:
+  judge-socket:

@@ -1,0 +1,78 @@
+.auth-recovery { text-align:center; margin:12px 0 0; font-size:.875rem }
+.row.auth-actions { justify-content:center }
+.auth-actions > button { width:min(200px, 100%) }
+.login-message { margin:4px 0 12px; font-size:.875rem }
+.login-message[role="alert"] { color:#a51f35 }
+:root[data-theme="dark"] .login-message[role="alert"] { color:#ff9ca9 }
+
+    :root {
+      
+      --radius-outer: 44px;    
+      --radius-card: 28px;     
+      --radius-pill: 999px;    
+
+      --blur-amount: 26px;
+      --saturate-amount: 190%;
+      --glass-bg: rgba(255, 255, 255, 0.38);
+      --overlay-glass: rgba(248, 250, 255, 0.28);
+      --glass-lip: rgba(255, 255, 255, 0.46);
+      
+      
+      --dropdown-glass-bg: rgba(248, 248, 252, 0.88);
+      --dropdown-border: rgba(255, 255, 255, 0.92);
+
+      --glass-border: rgba(255, 255, 255, 0.68);
+      --glass-shadow: 0 20px 48px rgba(0, 0, 0, 0.12), inset 0 1px 1px rgba(255, 255, 255, 0.8);
+      
+      
+      --control-bg: rgba(118, 118, 128, 0.14);
+      --control-hover: rgba(118, 118, 128, 0.22);
+      --active-glass-mask: rgba(255, 255, 255, 0.45);
+      --active-glass-border: rgba(255, 255, 255, 0.75);
+      --active-glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), inset 0 1px 0.5px rgba(255, 255, 255, 0.85);
+
+      
+      --dock-bg: rgba(255, 255, 255, 0.32);
+      --dock-border: rgba(255, 255, 255, 0.75);
+      --dock-shadow: 0 16px 40px rgba(0, 0, 0, 0.1), inset 0 1px 1px rgba(255, 255, 255, 0.9);
+
+      --text-primary: #1d1d1f;
+      --text-secondary: #515154;
+      --text-shadow: none;
+      --accent-blue: #007aff;
+      --accent-green: #34c759;
+      --specular-color: rgba(255, 255, 255, 0.45);
+      --spring-ease: cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    :root[data-theme="dark"] {
+      --glass-bg: rgba(28, 28, 30, 0.58);
+      --overlay-glass: rgba(27, 30, 39, 0.55);
+      --glass-lip: rgba(228, 240, 255, 0.19);
+      --dropdown-glass-bg: rgba(38, 38, 42, 0.9);
+      --dropdown-border: rgba(255, 255, 255, 0.22);
+
+      --glass-border: rgba(255, 255, 255, 0.18);
+      --glass-shadow: 0 24px 54px rgba(0, 0, 0, 0.55), inset 0 1px 1px rgba(255, 255, 255, 0.15);
+      --control-bg: rgba(118, 118, 128, 0.24);
+      --control-hover: rgba(118, 118, 128, 0.34);
+      
+      --active-glass-mask: rgba(255, 255, 255, 0.16);
+      --active-glass-border: rgba(255, 255, 255, 0.26);
+      --active-glass-shadow: 0 4px 12px rgba(0, 0, 0, 0.25), inset 0 1px 0.5px rgba(255, 255, 255, 0.25);
+
+      
+      --dock-bg: rgba(30, 30, 35, 0.35);
+      --dock-border: rgba(255, 255, 255, 0.22);
+      --dock-shadow: 0 16px 40px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.2);
+
+      --text-primary: #f5f5f7;
+      --text-secondary: #a1a1a6;
+      --text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+      --accent-blue: #0a84ff;
+      --accent-green: #30d158;
+      --specular-color: rgba(255, 255, 255, 0.16);
+    }
+
+
+.teacher-table-scroll { overflow-x:auto }

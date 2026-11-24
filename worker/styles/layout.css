@@ -1,0 +1,218 @@
+/* Reference dashboard: a frosted panel above the wallpaper and a separate floating dock. */
+.exam-shell {
+  --paper-width:min(var(--page-width,780px),calc(100% - 32px));
+  --paper-radius:44px;
+  --panel-fill:rgba(248,251,255,.32);
+  --frost-tint:rgba(248,250,255,.22);
+  --frost-filter:blur(9px) saturate(135%);
+  --rim-light:rgba(255,255,255,.85);
+  --rim-shade:rgba(57,71,98,.15);
+  --card-fill:rgba(255,255,255,.10);
+  --glass: rgba(255,255,255,.16);
+  --edge: rgba(255,255,255,.76);
+  --tile: transparent;
+  --dock: rgba(248,250,255,.78);
+  --shadow: 0 20px 48px rgba(35,39,66,.14), inset 0 1px 1px rgba(255,255,255,.8);
+  --tint: #14548f;
+  --classic-wall: radial-gradient(ellipse at 13% 14%,#ff9cac 0,transparent 35%),
+    radial-gradient(ellipse at 57% 59%,#8be3bf 0,transparent 37%),
+    radial-gradient(ellipse at 86% 89%,#65b7f5 0,transparent 50%),linear-gradient(135deg,#e0c3fc,#8ec5fc);
+  position: relative; isolation:isolate; display:flow-root; min-height:100vh;
+  padding:clamp(24px,7vh,68px) 0 calc(100px + env(safe-area-inset-bottom));
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft YaHei",sans-serif;
+}
+:root[data-theme="dark"] .exam-shell {
+  --panel-fill:rgba(24,27,35,.74);
+  --frost-tint:rgba(26,29,39,.32);
+  --rim-light:rgba(255,255,255,.31);
+  --rim-shade:rgba(0,0,0,.36);
+  --card-fill:rgba(210,220,240,.055);
+  --glass:rgba(28,28,36,.22); --tile:transparent; --edge:rgba(255,255,255,.18);
+  --dock:rgba(32,34,44,.87); --tint:#add7ff;
+  --shadow:0 24px 54px rgba(0,0,0,.42),inset 0 1px 1px rgba(255,255,255,.15);
+  --classic-wall:radial-gradient(ellipse at 13% 14%,#673950 0,transparent 37%),
+    radial-gradient(ellipse at 57% 59%,#244e50 0,transparent 37%),
+    radial-gradient(ellipse at 86% 89%,#193f64 0,transparent 50%),linear-gradient(135deg,#0f172a,#242042 52%,#31102f);
+}
+ .wallpaper {position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none; background:var(--wallpaper,var(--classic-wall))}
+    .blob {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(55px);
+      animation: float 14s infinite alternate ease-in-out;
+    }
+    .blob-1 { width: 350px; height: 350px; background: #ff758c; top: 4%; left: 8%; }
+    .blob-2 { width: 420px; height: 420px; background: #4facfe; bottom: 4%; right: 8%; animation-delay: -5s; }
+    .blob-3 { width: 300px; height: 300px; background: #43e97b; top: 42%; left: 44%; animation-delay: -9s; }
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(45px, -35px) scale(1.14); }
+    }
+
+
+.wallpaper[data-motion="static"] .blob {animation-play-state:paused}
+:root:not(:is([data-background="aurora"],[data-background="sun-amber"],[data-background="ocean-glow"])) .blob {opacity:.14}
+.exam-shell main {
+  position:relative;
+  border:1px solid var(--glass-border); box-shadow:var(--glass-shadow);
+  -webkit-backdrop-filter:blur(26px) saturate(190%); backdrop-filter:blur(26px) saturate(190%);
+}
+.exam-shell main::before {
+  content:""; position:absolute; inset:0; pointer-events:none; border-radius:inherit;
+  background:radial-gradient(650px circle at var(--mouse-x,50%) var(--mouse-y,-300px),var(--specular-color),transparent 45%);
+  z-index:-1;
+}
+.exam-shell main {background:var(--glass-bg); width:var(--paper-width); margin:0 auto; padding:clamp(18px,3vw,30px); border-radius:var(--paper-radius)}
+.exam-shell:has(.auth-dock),.exam-shell:has(form[action="/reset-password"]),.exam-shell:has(input[autocomplete="current-password"]) {display:grid; align-content:center}
+.exam-shell:has(.auth-dock) main,.exam-shell:has(form[action="/reset-password"]) main,.exam-shell:has(input[autocomplete="current-password"]) main {width:min(500px,calc(100% - 32px))}
+#view :is(#paper-cover,.cover-actions,.question-pager,.exam-actions)[hidden],
+#view:has(#paper-cover[hidden]) .question-group > h2,
+#view:has(#paper-cover[hidden]) .cover-clock { display:none }
+main:has(#paper-cover[hidden]) .toolbar h1 { font-size:1.375rem; line-height:1.35 }
+.cover-actions { justify-content:center }
+.question-pager { justify-content:center; align-items:center }
+.toolbar:has(> .question-pager:not([hidden])) {
+  display:grid; grid-template-columns:1fr auto 1fr; align-items:center; gap:12px;
+}
+.toolbar > .question-pager { margin:0 }
+@media (max-width:650px) {
+  .toolbar:has(> .question-pager:not([hidden])) { grid-template-columns:minmax(0,1fr) auto }
+  .toolbar > .question-pager { grid-row:2; grid-column:1 / -1 }
+}
+.question-pager [role=status] { font-variant-numeric:tabular-nums; color:var(--muted) }
+#view .question-group[hidden],#view .question-group article[hidden] { display:none }
+#view:has(#paper-cover[hidden]) > .question-group:not([hidden]) { display:contents }
+#view:has(#paper-cover[hidden]) .question-group > article { margin:0 }
+#question-nav a[aria-current=step] { outline:2px solid currentColor; outline-offset:1px }
+#question-nav-dialog,#history-dialog,#new-student-dialog,#course-dialog {
+  width:calc(var(--paper-width) - clamp(16px,2.5vw,32px)); max-width:var(--paper-width);
+  padding:16px clamp(18px,3vw,30px); overflow:hidden; max-height:min(75dvh,calc(100dvh - 16px));
+}
+:is(#question-nav-dialog,#history-dialog,#new-student-dialog,#course-dialog,.case-dialog,.exam-prompt) {
+  border:1px solid var(--edge); border-radius:var(--paper-radius);
+  color:var(--ink); background:var(--frost-tint);
+  box-shadow:inset 0 1px 1px rgba(255,255,255,.52),0 12px 36px rgba(25,35,55,.14);
+  -webkit-backdrop-filter:var(--frost-filter); backdrop-filter:var(--frost-filter);
+}
+:is(#question-nav-dialog,#history-dialog,#new-student-dialog)[open] { display:flex; flex-direction:column }
+#question-nav-toggle { white-space:nowrap }
+#question-nav-toggle[aria-expanded="true"] { border-color:var(--accent) }
+:root[data-theme="dark"] :is(#question-nav-dialog,#history-dialog,#new-student-dialog,#course-dialog,.case-dialog,.exam-prompt) { box-shadow:inset 0 1px 1px rgba(255,255,255,.18),0 12px 36px rgba(0,0,0,.24) }
+:is(#question-nav-dialog,#history-dialog,#new-student-dialog,#course-dialog,.case-dialog,.exam-prompt)::backdrop { background:rgba(15,24,40,.08) }
+:is(#close-question-nav,#close-history,#close-new-student) { display:grid; place-items:center; width:40px; height:40px; padding:0; color:var(--accent); background:transparent; box-shadow:none; backdrop-filter:none }
+:is(#close-question-nav,#close-history,#close-new-student)::before { content:none }
+:is(#close-question-nav,#close-history,#close-new-student):hover { background:var(--track) }
+:is(#question-nav-dialog,#history-dialog,#new-student-dialog) header { flex:none; display:flex; align-items:center; justify-content:space-between; margin-bottom:8px }
+#question-nav-frame { display:block; width:100%; height:1px; min-height:0; border:0 }
+body.nav-frame { background:transparent; padding:4px; overflow-wrap:anywhere }
+
+
+#question-nav h3 { margin:12px 0 5px; font-size:.875rem }
+.question-links { display:flex; flex-wrap:wrap; gap:4px }
+.question-links :is(a,span) { display:grid; place-items:center; min-width:32px; min-height:32px;
+  border:1px solid var(--line); border-radius:9px; color:var(--accent); text-decoration:none }
+.question-links a:is(:hover,:focus-visible) { background:var(--tile); border-color:var(--accent) }
+#question-nav { --done:#22634c; --done-bg:rgba(68,169,125,.18) }
+[data-theme="dark"] #question-nav { --done:#acedd2; --done-bg:rgba(78,183,138,.22) }
+.question-links a { display:inline-flex; justify-content:center; gap:2px; padding:0 4px; color:var(--muted) }
+.question-links a.complete { color:var(--done); border-color:var(--done); background:var(--done-bg) }
+.question-links a:not(.marked) .question-flag { display:none }
+.nav-legend { display:flex; gap:12px; font-size:.75rem; color:var(--muted) }
+.nav-legend span::before { content:""; display:inline-block; width:.6em; height:.6em; border:1px solid; border-radius:50%; margin-right:4px }
+.nav-legend span:last-child { color:var(--done) }
+.nav-legend span:last-child::before { background:currentColor }
+#question-nav [data-grade="correct"] { --grade-ink:var(--done); --grade-bg:var(--done-bg) }
+#question-nav [data-grade="incorrect"] { --grade-ink:#962939; --grade-bg:rgba(212,63,75,.14) }
+#question-nav [data-grade="partial"] { --grade-ink:#794900; --grade-bg:rgba(221,156,32,.18) }
+#question-nav [data-grade="ungraded"] { --grade-ink:var(--muted); --grade-bg:var(--tile) }
+[data-theme="dark"] #question-nav [data-grade="incorrect"] { --grade-ink:#ffb4bc }
+[data-theme="dark"] #question-nav [data-grade="partial"] { --grade-ink:#ffcf80 }
+#question-nav [data-grade] { color:var(--grade-ink) }
+#question-nav a[data-grade] { border-color:currentColor; background:var(--grade-bg) }
+#question-nav .nav-legend [data-grade]::before { background:currentColor }
+.question-flag { flex:none; vertical-align:middle }
+.question-links .question-flag,.mark-question[aria-pressed="true"] .question-flag { color:#9a5511; fill:currentColor }
+[data-theme="dark"] :is(.question-links,.mark-question[aria-pressed="true"]) .question-flag { color:#ffd28a }
+.exam-shell .mark-question { float:right; min-height:32px; padding:4px 8px; margin:0 0 4px 8px }
+.question-card-tools { display:flex; justify-content:flex-end; align-items:center; gap:6px; flex:none }
+.exam-shell .question-card-tools > button { display:grid; place-items:center; width:32px; height:32px; min-height:32px; margin:0; padding:0; float:none }
+.question-card-toggle[aria-pressed="true"] { color:var(--accent) }
+article[id^="exam-question-"] { scroll-margin-top:60px }
+@media print { #question-nav { display:none } }
+.exam-clock { position:sticky; top:8px; z-index:3; width:max-content; margin:0 0 12px auto; padding:6px 14px; border:1px solid var(--edge); border-radius:999px; background:var(--dock); backdrop-filter:blur(16px); font-variant-numeric:tabular-nums }
+.exam-shell .toolbar {border:0; margin-bottom:18px; padding:0}
+.exam-shell h1 {letter-spacing:-.035em}
+.exam-shell section,.exam-shell article,.exam-shell .paper-card,.exam-shell main > form:not([action="/logout"],#grading) {
+  background:var(--control-bg); border:0; border-radius:var(--radius-card); box-shadow:none;
+}
+.exam-shell th { background:var(--track); color:var(--ink) }
+.exam-shell tbody tr:nth-child(odd) { background:transparent }
+.exam-shell tbody tr:nth-child(even) { background:var(--card-fill) }
+.exam-shell main > form:not([action="/logout"],#grading) {padding:clamp(16px,3vw,24px); margin-bottom:16px}
+.exam-shell main > form > h2 {margin-bottom:14px}
+.exam-shell input,.exam-shell textarea,.exam-shell select {background:var(--tile); border:1px solid var(--line); color:var(--ink)}
+.exam-shell select {border-radius:999px; padding:7px 12px}
+.exam-shell button:not(.segment),.exam-shell .segments {background:var(--tile)}
+.exam-shell button:not(.segment):enabled:hover,.exam-shell .paper-card:hover {box-shadow:0 3px 12px rgba(25,40,60,.12),inset 0 0 0 1px var(--line)}
+.exam-shell .option[aria-pressed="true"],.exam-shell .selection {background:var(--glass)}
+.exam-shell .paper-number {color:var(--tint);font-weight:650}
+.exam-shell textarea.code {color:#e2e8f0; background:#212530; border-color:var(--edge)}
+.floating-dock {position:fixed; z-index:5; bottom:calc(16px + env(safe-area-inset-bottom)); left:50%; transform:translateX(-50%);
+  --dock-motion:280ms cubic-bezier(.34,1.56,.64,1);
+  --glass:rgba(255,255,255,.45); --tile:transparent;
+  --highlight:inset 0 1px 0 rgba(255,255,255,.52);
+  display:flex; align-items:center; justify-content:center; gap:6px; padding:6px; border-radius:999px;
+  max-width:calc(100% - 16px); width:max-content; background:rgba(255,255,255,.32);
+  border:1px solid rgba(255,255,255,.75); box-shadow:var(--highlight),0 16px 40px rgba(0,0,0,.10);
+  -webkit-backdrop-filter:blur(26px) saturate(190%); backdrop-filter:blur(26px) saturate(190%) }
+:root[data-theme="dark"] .floating-dock {
+  --glass:rgba(221,234,255,.13); --highlight:inset 0 1px 0 rgba(255,255,255,.15);
+  background:rgba(30,30,35,.35); border-color:rgba(255,255,255,.22);
+  box-shadow:var(--highlight),0 16px 40px rgba(0,0,0,.40) }
+.floating-dock > a,.floating-dock form button {display:block; padding:9px 14px; border-radius:999px; color:var(--ink); font-weight:600; text-decoration:none; font-size:.875rem; white-space:nowrap}
+.floating-dock > a:hover,.floating-dock [aria-current="page"] {background:var(--glass); box-shadow:var(--highlight)}
+.floating-dock form {margin:0}
+@media(max-width:520px){
+  .exam-shell {--paper-radius:32px}
+  .floating-dock {gap:2px; flex-wrap:wrap; border-radius:28px}
+  .floating-dock > a,.floating-dock form button,.floating-dock .segment {padding:7px 9px}
+  .floating-dock .segments {width:auto}
+}
+/* Equal-width items let a single highlight travel between the two pages and the navigator. */
+:is(.student-dock,.teacher-dock,.auth-dock) { display:grid; grid-auto-flow:column; grid-auto-columns:1fr; gap:0; isolation:isolate }
+:is(.student-dock,.teacher-dock,.auth-dock) > :is(a,button) { text-align:center; white-space:nowrap; padding:8px 12px; font-family:inherit; font-size:.875rem; font-weight:600; line-height:1.5; color:var(--ink) }
+:is(.student-dock,.teacher-dock,.auth-dock) > [aria-current="page"],:is(.student-dock,.teacher-dock,.auth-dock) > a:hover { background:transparent; box-shadow:none }
+.auth-dock,.student-dock:has(> #question-nav-toggle[hidden]) { --dock-count:2 }
+:is(.student-dock,.auth-dock):has(:where(a:nth-of-type(2)[aria-current])) { --dock-index:1 }
+.student-dock:has([aria-expanded="true"]) { --dock-index:2 }
+.teacher-dock:has(#student[aria-pressed="true"]) { --dock-index:1 }
+.teacher-dock:has(a[aria-current="page"]) { --dock-index:2 }
+.teacher-dock button.segment[aria-pressed="true"] { font-weight:600 }
+.floating-dock:is(.student-dock,.teacher-dock,.auth-dock) > :is(a,button) {
+  color:var(--muted); transition:color 140ms ease,scale 140ms ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.floating-dock > :is(a[aria-current="page"],button[aria-pressed="true"],button[aria-expanded="true"]) { color:var(--ink) }
+.floating-dock.student-dock:has([aria-expanded="true"]) > a[aria-current] { color:var(--muted) }
+.floating-dock:is(.student-dock,.teacher-dock,.auth-dock) > :is(a,button):active { scale:.96; color:var(--ink) }
+.account-controls { display:inline-flex; align-items:center; gap:10px; white-space:nowrap }
+.account-controls form { margin:0 }
+.account-actions { justify-content:flex-end }
+.dock-indicator { position:absolute; z-index:-1; inset:6px auto 6px 6px; width:calc((100% - 12px) / var(--dock-count,3));
+  border-radius:999px; background:var(--glass); box-shadow:var(--highlight); border:1px solid var(--line);
+  transform:translateX(calc(var(--pending-tab,var(--dock-index,0)) * 100%)); transition:transform var(--dock-motion) }
+.student-dock:not(:has(.dock-indicator)) > [aria-current] { background:var(--glass) }
+@media(prefers-reduced-motion:reduce){
+  .dock-indicator,.floating-dock:is(.student-dock,.teacher-dock,.auth-dock) > :is(a,button) { transition:none }
+  .floating-dock:is(.student-dock,.teacher-dock,.auth-dock) > :is(a,button):active { scale:none }
+}
+#theme-mode { width:44px; height:44px; padding:0; display:inline-grid; place-items:center; border-radius:50% }
+#theme-mode .sun, :root[data-theme="dark"] #theme-mode .moon { display:none }
+:root[data-theme="dark"] #theme-mode .sun { display:block }
+
+/* Keep existing dismiss controls visible when the dialog itself scrolls. */
+dialog > :is(header,.paper-actions-heading,.paper-heading) {
+  position:sticky; top:0; z-index:10; flex-shrink:0;
+  background:var(--frost-tint); backdrop-filter:var(--frost-filter);
+  -webkit-backdrop-filter:var(--frost-filter);
+}
